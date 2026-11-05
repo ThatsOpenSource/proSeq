@@ -1,0 +1,211 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ProSeq.ViewModels"
+        x:Class="ProSeq.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="proSeq"
+        Icon="/Assets/app.ico"
+        Width="1000" Height="820"
+        MinWidth="820" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFFFFF"
+        FontFamily="Inter, Segoe UI, Helvetica, Arial, sans-serif"
+        FontSize="13">
+
+  <Window.DataContext>
+    <vm:MainViewModel />
+  </Window.DataContext>
+
+  <Grid Margin="20" RowDefinitions="Auto,*,Auto">
+    <!-- Header -->
+    <DockPanel Grid.Row="0" Margin="0,0,0,16">
+      <Button DockPanel.Dock="Right"
+              Content="Vorlage wählen…"
+              HorizontalAlignment="Right"
+              VerticalAlignment="Center"
+              Click="OnOpenTemplateDialog"
+              Padding="16,8"/>
+      <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+        <Image Source="/Assets/app-32.png" Width="32" Height="32" VerticalAlignment="Center"/>
+        <StackPanel Spacing="2" VerticalAlignment="Center">
+          <TextBlock Text="proSeq" FontSize="22" FontWeight="Bold" Foreground="#111111"/>
+          <TextBlock Text="Buchungssequenzen – Generator für Zeitwirtschaft" Foreground="#555555"/>
+        </StackPanel>
+      </StackPanel>
+    </DockPanel>
+
+    <!-- Main content: params | results -->
+    <Grid Grid.Row="1" ColumnDefinitions="340,*" ColumnSpacing="20">
+
+      <!-- Left: params + times -->
+      <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="12">
+
+          <Border Classes="card">
+            <StackPanel Spacing="4">
+              <TextBlock Text="PROZEDUR" FontWeight="Bold" FontSize="12" LetterSpacing="1"/>
+              <TextBlock Text="{Binding SelectedProcedure.Name}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+              <TextBlock Text="{Binding AttentionNote}"
+                         Foreground="#111111" FontWeight="SemiBold" TextWrapping="Wrap" FontSize="12"/>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="10">
+              <TextBlock Text="AUSWAHL" FontWeight="Bold" FontSize="12" LetterSpacing="1"/>
+
+              <TextBlock Text="Beginn am" FontSize="11" Foreground="#555555"/>
+              <ComboBox ItemsSource="{Binding OrtBeginnOptions}" SelectedItem="{Binding SelectedOrtBeginn}" HorizontalAlignment="Stretch"/>
+
+              <TextBlock Text="Dienstgang / Außentermin" FontSize="11" Foreground="#555555"/>
+              <ComboBox ItemsSource="{Binding DienstgangOptions}" SelectedItem="{Binding SelectedDienstgang}" HorizontalAlignment="Stretch"/>
+
+              <StackPanel IsVisible="{Binding ShowDienstgangDetails}" Spacing="10">
+                <TextBlock Text="Dienstgang endet mit" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding DienstgangEndeTypOptions}" SelectedItem="{Binding SelectedDienstgangEndeTyp}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding ShowDienstgangOrt}" Spacing="10">
+                <TextBlock Text="Standort des Dienstgangs" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding DienstgangOrtOptions}" SelectedItem="{Binding SelectedDienstgangOrt}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding ShowOrtEnde}" Spacing="10">
+                <TextBlock Text="Ende am" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding OrtEndeOptions}" SelectedItem="{Binding SelectedOrtEnde}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding ShowMitarbeiterTyp}" Spacing="10">
+                <TextBlock Text="Beschäftigtengruppe" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding MitarbeiterTypOptions}" SelectedItem="{Binding SelectedMitarbeiterTyp}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding ShowZusatzMobil}" Spacing="10">
+                <TextBlock Text="Später noch mobil?" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding ZusatzMobilOptions}" SelectedItem="{Binding SelectedZusatzMobil}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+
+              <StackPanel IsVisible="{Binding ShowDienstreise}" Spacing="10">
+                <TextBlock Text="Dienstreiseantrag?" FontSize="11" Foreground="#555555"/>
+                <ComboBox ItemsSource="{Binding DienstreiseOptions}" SelectedItem="{Binding SelectedDienstreise}" HorizontalAlignment="Stretch"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Border Classes="card">
+            <StackPanel Spacing="8">
+              <TextBlock Text="ZEITEN" FontWeight="Bold" FontSize="12" LetterSpacing="1"/>
+              <ItemsControl ItemsSource="{Binding TimeInputs}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid ColumnDefinitions="*,100" Margin="0,0,0,6">
+                      <TextBlock Text="{Binding Label}" VerticalAlignment="Center" FontSize="12"/>
+                      <TextBox Grid.Column="1" Text="{Binding Value}" Watermark="HH:mm"/>
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <Border Height="1" Background="#DDDDDD" Margin="0,6"/>
+
+              <Grid ColumnDefinitions="*,100">
+                <TextBlock Text="Sollarbeitszeit" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold"/>
+                <TextBox Grid.Column="1" Text="{Binding SollzeitText}" Watermark="07:48"/>
+              </Grid>
+
+              <Border Height="1" Background="#DDDDDD" Margin="0,8,0,4"/>
+
+              <DockPanel>
+                <Button DockPanel.Dock="Right" Content="+ Pause" Click="OnAddPause" Padding="10,4" FontSize="12"/>
+                <TextBlock Text="Pausen" FontWeight="SemiBold" FontSize="12" VerticalAlignment="Center"/>
+              </DockPanel>
+              <TextBlock Text="Keine Arbeitszeit · ≥15 Min zählen zur Mindestpause"
+                         Foreground="#888888" FontSize="11" TextWrapping="Wrap"/>
+              <ItemsControl ItemsSource="{Binding CustomPauses}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <DockPanel Margin="0,2,0,2">
+                      <Button DockPanel.Dock="Right" Content="✕" Tag="{Binding}" Click="OnRemovePause"
+                              Classes="secondary" Padding="8,2" FontSize="11"/>
+                      <TextBlock Text="{Binding Display}" VerticalAlignment="Center" FontSize="12"/>
+                    </DockPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+</StackPanel>
+      </ScrollViewer>
+
+      <!-- Right: results -->
+      <Border Grid.Column="1" Classes="card">
+        <Grid RowDefinitions="Auto,*,Auto,Auto">
+          <TextBlock Grid.Row="0" Text="BUCHUNGSSEQUENZ" FontWeight="Bold" FontSize="12" LetterSpacing="1" Margin="0,0,0,12"/>
+
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding BookingResults}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderBrush="#DDDDDD" BorderThickness="0,0,0,1" Padding="0,8">
+                    <Grid ColumnDefinitions="28,160,70,*">
+                      <TextBlock Text="{Binding Nummer}" FontWeight="Bold" VerticalAlignment="Top"/>
+                      <TextBlock Grid.Column="1" Text="{Binding Aktion}" FontWeight="SemiBold" VerticalAlignment="Top"/>
+                      <TextBlock Grid.Column="2" Text="{Binding Zeit}" VerticalAlignment="Top"/>
+                      <TextBlock Grid.Column="3" Text="{Binding Kommentar}" Foreground="#555555" TextWrapping="Wrap" FontSize="11" VerticalAlignment="Top"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+
+          <Border Grid.Row="2" BorderBrush="#CCCCCC" BorderThickness="0,1,0,0" Padding="0,12,0,0" Margin="0,8,0,0">
+            <StackPanel Spacing="6">
+              <TextBlock Text="ZEITÜBERSICHT" FontWeight="Bold" FontSize="12" LetterSpacing="1"/>
+              <Grid ColumnDefinitions="120,80,120,80">
+                <TextBlock Text="Gearbeitet" Foreground="#555555"/>
+                <TextBlock Grid.Column="1" Text="{Binding SummaryGearbeitet}" FontWeight="SemiBold"/>
+                <TextBlock Grid.Column="2" Text="Sollzeit" Foreground="#555555"/>
+                <TextBlock Grid.Column="3" Text="{Binding SummarySollzeit}" FontWeight="SemiBold"/>
+              </Grid>
+              <Grid ColumnDefinitions="120,80,120,80">
+                <TextBlock Text="Pause" Foreground="#555555"/>
+                <TextBlock Grid.Column="1" Text="{Binding SummaryPause}" FontWeight="SemiBold"/>
+                <TextBlock Grid.Column="2" Text="Differenz" Foreground="#555555"/>
+                <TextBlock Grid.Column="3" Text="{Binding SummaryDifferenz}" FontWeight="SemiBold"/>
+              </Grid>
+              <Grid ColumnDefinitions="120,80">
+                <TextBlock Text="Soll-Arbeitsende" Foreground="#555555"/>
+                <TextBlock Grid.Column="1" Text="{Binding SummarySollEnde}" FontWeight="SemiBold"/>
+              </Grid>
+              <Grid ColumnDefinitions="160,80"
+                    IsVisible="{Binding ShowMindestpauseAbzug}">
+                <TextBlock Text="Mindestpause-Abzug" Foreground="#555555"/>
+                <TextBlock Grid.Column="1" Text="{Binding SummaryMindestpauseAbzug}" FontWeight="SemiBold"/>
+              </Grid>
+              <TextBlock Text="{Binding SummaryWarning}"
+                         IsVisible="{Binding ShowSummaryWarning}"
+                         FontWeight="Bold"
+                         Foreground="#111111"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <TextBlock Grid.Row="3" Text="{Binding StatusMessage}" Foreground="#555555" Margin="0,12,0,0" TextWrapping="Wrap"/>
+        </Grid>
+      </Border>
+    </Grid>
+
+    <!-- Footer: author + actions -->
+    <DockPanel Grid.Row="2" Margin="0,16,0,0">
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="12">
+        <Button Content="Zurücksetzen" Command="{Binding ResetCommand}" Classes="secondary"/>
+        <Button Content="Buchungen generieren" Command="{Binding GenerateCommand}"/>
+      </StackPanel>
+      <TextBlock Text="proSeq v1.0.0  ·  eGovernment  ·  © 2026 Lenny Kunz"
+                 Foreground="#888888"
+                 FontSize="11"
+                 VerticalAlignment="Center"/>
+    </DockPanel>
+  </Grid>
+</Window>

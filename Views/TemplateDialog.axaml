@@ -1,0 +1,37 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="using:ProSeq.Models"
+        x:Class="ProSeq.Views.TemplateDialog"
+        Title="Vorlage wählen"
+        Width="640" Height="480"
+        WindowStartupLocation="CenterOwner"
+        CanResize="True"
+        Background="#FFFFFF"
+        FontFamily="Inter, Segoe UI, Helvetica, Arial, sans-serif"
+        FontSize="13">
+
+  <Grid Margin="20" RowDefinitions="Auto,*,Auto">
+    <TextBlock Grid.Row="0" Text="VORLAGE AUSWÄHLEN" FontWeight="Bold" FontSize="14" LetterSpacing="1" Margin="0,0,0,12"/>
+
+    <ListBox Grid.Row="1"
+             x:Name="TemplateList"
+             Background="Transparent"
+             BorderBrush="#CCCCCC"
+             BorderThickness="1">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="models:Procedure">
+          <StackPanel Spacing="2" Margin="8,6">
+            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Description}" Foreground="#555555" TextWrapping="Wrap" FontSize="12"/>
+            <TextBlock Text="{Binding Category}" Foreground="#999999" FontSize="11"/>
+          </StackPanel>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+
+    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,16,0,0">
+      <Button Content="Abbrechen" Click="OnCancel" Classes="secondary"/>
+      <Button Content="Übernehmen" Click="OnConfirm" x:Name="ConfirmButton"/>
+    </StackPanel>
+  </Grid>
+</Window>
